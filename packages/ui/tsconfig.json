@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "jsx": "react",
+    "baseUrl": ".",
+    "paths": {
+      "@camnextgen/ui/*": [
+        "src/*"
+      ]
+    }
+  },
+  "extends": "../config/tsconfig/base.json",
+  "include": [
+    "src"
+  ]
+}

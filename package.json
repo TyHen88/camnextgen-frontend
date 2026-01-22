@@ -1,0 +1,31 @@
+{
+  "name": "camnextgen",
+  "private": true,
+  "version": "0.1.0",
+  "packageManager": "pnpm@9.12.2",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "turbo run dev --parallel",
+    "dev:admin": "turbo run dev --filter=admin-app",
+    "dev:student": "turbo run dev --filter=student-app",
+    "build": "turbo run build",
+    "build:admin": "turbo run build --filter=admin-app",
+    "build:student": "turbo run build --filter=student-app",
+    "lint": "turbo run lint",
+    "format": "prettier --write ."
+  },
+  "devDependencies": {
+    "eslint": "^8.57.0",
+    "prettier": "^3.3.3",
+    "turbo": "^2.0.14",
+    "typescript": "^5.5.4"
+  },
+  "dependencies": {
+    "lucide-react": "^0.562.0",
+    "next-themes": "^0.4.6",
+    "sonner": "^2.0.7"
+  }
+}
