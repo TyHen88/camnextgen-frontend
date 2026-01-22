@@ -17,18 +17,8 @@ type FormValues = z.infer<typeof schema>;
 
 export const LoginForm = () => {
   const router = useRouter();
-  const mutation = useLoginMutation();
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors }
-  } = useForm<FormValues>({ resolver: zodResolver(schema) });
-
-  const onSubmit = async (values: FormValues) => {
-    try {
-      const payload = await mutation.mutateAsync(values);
-
+  const mutation = useLoginMutation({
+    onSuccess: (payload) => {
       if (payload.user.role === 'ADMIN') {
         router.replace('/dashboard');
         router.refresh();
@@ -43,6 +33,18 @@ export const LoginForm = () => {
 
       router.replace('/dashboard');
       router.refresh();
+    }
+  });
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors }
+  } = useForm<FormValues>({ resolver: zodResolver(schema) });
+
+  const onSubmit = async (values: FormValues) => {
+    try {
+      await mutation.mutateAsync(values);
     } catch (error) {
       toast.error('Login failed', {
         description: 'Please check your credentials and try again.'

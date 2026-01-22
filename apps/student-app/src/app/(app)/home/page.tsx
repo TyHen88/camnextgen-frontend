@@ -1,8 +1,9 @@
 'use client';
 import { PageShell } from '@/components/page-shell';
 import { useAuth } from '@camnextgen/lib';
-import { Badge, Card, CardContent } from '@camnextgen/ui';
+import { Badge, Card, CardContent, Button } from '@camnextgen/ui';
 import { use, useEffect, useState } from 'react';
+import { toast } from 'sonner';
 
 export default function Page() {
   const { user } = useAuth();
@@ -21,6 +22,21 @@ export default function Page() {
       <div className="grid gap-6 md:grid-cols-2">
         <Card className="bg-card">
           <CardContent className="space-y-3">
+            <Button
+
+              variant="outline"
+              onClick={() =>
+                toast("Event has been created", {
+                  description: "Sunday, December 03, 2023 at 9:00 AM",
+                  action: {
+                    label: "Undo",
+                    onClick: () => console.log("Undo"),
+                  },
+                })
+              }
+            >
+              Show Toast
+            </Button>
             <Badge variant="accent">In Progress</Badge>
             <h3 className="text-lg font-semibold text-foreground">Frontend Foundations</h3>
             <p className="text-sm text-muted-foreground">Lesson 4: Responsive Layouts</p>

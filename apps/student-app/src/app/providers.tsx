@@ -5,11 +5,11 @@ import { ThemeProvider, ToastProvider } from '@camnextgen/ui';
 
 export const Providers = ({ children }: { children: React.ReactNode }) => (
   <ThemeProvider>
+    <ToastProvider />
     <I18nProvider>
       <QueryProvider>
         <AuthProvider>
           {children}
-          <ToastProvider />
         </AuthProvider>
       </QueryProvider>
     </I18nProvider>

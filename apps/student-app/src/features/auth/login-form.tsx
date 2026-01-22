@@ -21,7 +21,24 @@ export const LoginForm = () => {
   const searchParams = useSearchParams();
   const token = searchParams.get('token');
   const redirect = searchParams.get('redirect');
-  const mutation = useLoginMutation();
+  const mutation = useLoginMutation({
+    onSuccess: (payload) => {
+      if (payload.user.role === 'STUDENT') {
+        router.replace('/home');
+        router.refresh();
+        return;
+      }
+
+      const adminBase = process.env.NEXT_PUBLIC_ADMIN_BASE_URL;
+      if (adminBase) {
+        window.location.href = `${adminBase}/dashboard?access=denied`;
+        return;
+      }
+
+      router.replace('/home');
+      router.refresh();
+    }
+  });
 
   useEffect(() => {
     if (token && redirect?.includes('verify')) {
@@ -37,22 +54,7 @@ export const LoginForm = () => {
 
   const onSubmit = async (values: FormValues) => {
     try {
-      const payload = await mutation.mutateAsync(values);
-
-      if (payload.user.role === 'STUDENT') {
-        router.replace('/home');
-        router.refresh();
-        return;
-      }
-
-      const adminBase = process.env.NEXT_PUBLIC_ADMIN_BASE_URL;
-      if (adminBase) {
-        window.location.href = `${adminBase}/dashboard?access=denied`;
-        return;
-      }
-
-      router.replace('/home');
-      router.refresh();
+      await mutation.mutateAsync(values);
     } catch (error) {
       toast.error('Login failed', {
         description: 'Please check your credentials and try again.'
