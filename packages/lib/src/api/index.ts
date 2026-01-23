@@ -205,13 +205,45 @@ export const adminApi = {
     apiFetch<ApiResponse<null>>(endpoints.admin.courseDetail(id), {
       method: 'DELETE'
     }),
-  auditLogs: (params?: Record<string, string | number | undefined>) =>
-    apiFetch<ApiResponse<{ items: AuditLog[] }>>(
-      `${endpoints.admin.auditLogs}${toQuery(params)}`,
+  auditLogs: async () => {
+    const response = await apiFetch<unknown>(endpoints.admin.auditLogs, { method: 'GET' });
+    const payload = unwrap<unknown>(response);
+    const auditLogs = Array.isArray(payload)
+      ? payload
+      : typeof payload === 'object' && payload !== null
+        ? 'items' in payload
+          ? ((payload as { items?: AuditLog[] }).items ?? [])
+          : 'auditLogs' in payload
+            ? ((payload as { auditLogs?: AuditLog[] }).auditLogs ?? [])
+            : []
+        : [];
+    return buildResponse(response, auditLogs);
+  },
+  usersList: (params?: UserListParams) =>
+    apiFetch<ApiResponse<{ items: User[] }>>(
+      `${endpoints.admin.usersList}${toQuery({
+        query: params?.query,
+        page: params?.page,
+        size: params?.size
+      })}`,
       {
         method: 'GET'
       }
     ),
+  userDetail: (id: string) =>
+    apiFetch<ApiResponse<User>>(endpoints.admin.userDetail(id), {
+      method: 'GET'
+    }),
+  userUpdate: (id: string, payload: Partial<User>) =>
+    apiFetch<ApiResponse<User>>(endpoints.admin.userDetail(id), {
+      method: 'PUT',
+      body: JSON.stringify(payload)
+    }),
+  userDelete: (id: string) =>
+    apiFetch<ApiResponse<null>>(endpoints.admin.userDetail(id), {
+      method: 'DELETE'
+    }),
+  )
   reportsOverview: () =>
     apiFetch<ApiResponse<ReportsOverview>>(endpoints.admin.reportsOverview, {
       method: 'GET'

@@ -70,4 +70,5 @@ export const useMeQuery = () =>
       const response = await userApi.me();
       return response.data;
     },
+    retry: false
   });

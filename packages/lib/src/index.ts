@@ -12,5 +12,6 @@ export * from './query/provider';
 export * from './query/keys';
 export * from './hooks/auth';
 export * from './hooks/courses';
+export * from './hooks/admin';
 export * from './i18n/provider';
 export * from './i18n/language-toggle';
