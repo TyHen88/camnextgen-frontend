@@ -1,32 +1,48 @@
 {
   "name": "camnextgen",
-  "private": true,
   "version": "0.1.0",
-  "packageManager": "pnpm@9.12.2",
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ],
+  "private": true,
   "scripts": {
-    "dev": "turbo run dev --parallel",
-    "dev:admin": "turbo run dev --filter=admin-app",
-    "dev:student": "turbo run dev --filter=student-app",
-    "build": "turbo run build",
-    "build:admin": "turbo run build --filter=admin-app",
-    "build:student": "turbo run build --filter=student-app",
-    "lint": "turbo run lint",
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
     "format": "prettier --write ."
   },
-  "devDependencies": {
-    "eslint": "^8.57.0",
-    "prettier": "^3.3.3",
-    "turbo": "^2.0.14",
-    "typescript": "^5.5.4"
-  },
   "dependencies": {
+    "@hookform/resolvers": "^3.9.0",
+    "@radix-ui/react-dialog": "^1.0.5",
+    "@radix-ui/react-dropdown-menu": "^2.1.2",
+    "@radix-ui/react-scroll-area": "^1.2.10",
+    "@radix-ui/react-slot": "^1.0.2",
+    "@radix-ui/react-tabs": "^1.0.4",
+    "@tanstack/react-query": "^5.51.16",
     "@tanstack/react-table": "^8.21.3",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.1.1",
+    "input-otp": "^1.4.2",
     "lucide-react": "^0.562.0",
+    "next": "^14.2.5",
     "next-themes": "^0.4.6",
-    "sonner": "^2.0.7"
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-hook-form": "^7.52.2",
+    "sonner": "^2.0.7",
+    "swr": "^2.2.0",
+    "tailwind-merge": "^2.4.0",
+    "tailwindcss-animate": "^1.0.7",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.12",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "autoprefixer": "^10.4.20",
+    "eslint": "^8.57.0",
+    "eslint-config-next": "^14.2.5",
+    "postcss": "^8.4.39",
+    "prettier": "^3.3.3",
+    "tailwindcss": "^3.4.10",
+    "typescript": "^5.5.4"
   }
 }

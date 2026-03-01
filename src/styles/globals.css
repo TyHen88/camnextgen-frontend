@@ -1,0 +1,124 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 220 20% 97.1%;
+    --foreground: 214.3 28% 9.8%;
+    --card: 0 0% 100%;
+    --card-foreground: 214.3 28% 9.8%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 214.3 28% 9.8%;
+    --primary: 10 100% 54.3%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 220 15% 92.2%;
+    --secondary-foreground: 214.3 28% 9.8%;
+    --muted: 220 15% 92.2%;
+    --muted-foreground: 217.6 21.7% 46.1%;
+    --accent: 220 15% 92.2%;
+    --accent-foreground: 214.3 28% 9.8%;
+    --destructive: 10 87.6% 47.3%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 220 15% 92.2%;
+    --input: 220 15% 92.2%;
+    --ring: 10 100% 54.3%;
+    --radius: 1.5rem;
+    color-scheme: light;
+  }
+
+  .dark {
+    --background: 216.9 33.3% 7.6%;
+    --foreground: 220 15% 92.2%;
+    --card: 214.3 28% 9.8%;
+    --card-foreground: 220 15% 92.2%;
+    --popover: 214.3 28% 9.8%;
+    --popover-foreground: 220 15% 92.2%;
+    --primary: 10 100% 54.3%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 212.7 23.9% 18%;
+    --secondary-foreground: 220 15% 92.2%;
+    --muted: 212.7 23.9% 18%;
+    --muted-foreground: 216 19% 69%;
+    --accent: 212.7 23.9% 18%;
+    --accent-foreground: 220 15% 92.2%;
+    --destructive: 10 87.6% 47.3%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 212.7 23.9% 18%;
+    --input: 212.7 23.9% 18%;
+    --ring: 10 100% 54.3%;
+    color-scheme: dark;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  html,
+  body {
+    height: 100%;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-body);
+  }
+
+  html[lang='km'] body {
+    font-family: var(--font-khmer), var(--font-body);
+  }
+}
+
+@layer utilities {
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes slide-up {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fade-in {
+    animation: fade-in 0.8s ease-out forwards;
+  }
+
+  .animate-slide-up {
+    animation: slide-up 0.8s ease-out forwards;
+    opacity: 0;
+  }
+
+  .animation-delay-200 {
+    animation-delay: 200ms;
+  }
+
+  .animation-delay-300 {
+    animation-delay: 300ms;
+  }
+
+  .animation-delay-400 {
+    animation-delay: 400ms;
+  }
+
+  .animation-delay-600 {
+    animation-delay: 600ms;
+  }
+
+  .bg-grid-pattern {
+    background-image:
+      linear-gradient(to right, currentColor 1px, transparent 1px),
+      linear-gradient(to bottom, currentColor 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+}
