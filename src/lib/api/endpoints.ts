@@ -11,7 +11,8 @@ export const endpoints = {
     refresh: '/api/v1/auth/refresh'
   },
   users: {
-    me: '/api/v1/users/me'
+    me: '/api/v1/users/me',
+    menus: '/api/v1/users/me/menus'
   },
   courses: {
     list: '/api/v1/courses',

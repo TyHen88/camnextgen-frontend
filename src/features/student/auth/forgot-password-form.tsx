@@ -29,7 +29,7 @@ export const ForgotPasswordForm = () => {
       toast.success('Check your email', {
         description: 'An OTP has been sent for password reset.'
       });
-      router.push(`/auth/reset-password?email=${encodeURIComponent(values.email)}`);
+      router.push(`/auth/verify-otp?email=${encodeURIComponent(values.email)}&purpose=PASSWORD_RESET`);
     } catch (error) {
       toast.error('Request failed', {
         description: 'Please check your email and try again.'

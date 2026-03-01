@@ -1,7 +1,9 @@
+'use client';
 import { PageShell } from '@/components/student/page-shell';
 import { Card, CardContent } from '@/components/ui';
+import { withMenuPermission } from '@/lib';
 
-export default function Page() {
+function Page() {
   return (
     <PageShell title="Settings" description="Customize your learning experience.">
       <Card className="bg-card">
@@ -12,3 +14,5 @@ export default function Page() {
     </PageShell>
   );
 }
+
+export default withMenuPermission(Page, 'MENU_SETTINGS');

@@ -3,7 +3,7 @@
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Button, Card, CardContent, CardHeader, CardTitle, Input, Label } from '@/components/ui';
+import { Button, Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter, Input, Label } from '@/components/ui';
 import { useRegisterMutation } from '@/lib';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
@@ -54,10 +54,10 @@ export const RegisterForm = () => {
     <Card className="border-0 bg-card/95 shadow-2xl">
       <CardHeader>
         <CardTitle>Create your account</CardTitle>
-        <p className="text-sm text-muted-foreground">Start learning with CamNextGen.</p>
+        <CardDescription>Start learning with CamNextGen.</CardDescription>
       </CardHeader>
       <CardContent>
-        <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
+        <form id="register-form" className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
           <div className="space-y-2">
             <Label htmlFor="name">Full name</Label>
             <Input id="name" placeholder="Sokha Chea" {...register('fullName')} />
@@ -82,11 +82,29 @@ export const RegisterForm = () => {
               <p className="text-xs text-destructive">{errors.confirmPassword.message}</p>
             ) : null}
           </div>
-          <Button className="w-full" type="submit" disabled={mutation.isPending}>
-            {mutation.isPending ? 'Creating account...' : 'Create account'}
-          </Button>
         </form>
       </CardContent>
+      <CardFooter className="flex flex-col gap-4">
+        <Button
+          className="w-full h-11 text-base font-bold shadow-soft"
+          type="submit"
+          form="register-form"
+          disabled={mutation.isPending}
+        >
+          {mutation.isPending ? 'Creating account...' : 'Create account'}
+        </Button>
+
+        <div className="text-center text-sm text-muted-foreground">
+          Already have an account?{' '}
+          <button
+            type="button"
+            onClick={() => router.push('/auth/login')}
+            className="text-primary font-bold hover:underline underline-offset-4"
+          >
+            Sign in
+          </button>
+        </div>
+      </CardFooter>
     </Card>
   );
 };

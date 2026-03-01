@@ -10,6 +10,7 @@ export * from './constants/routes';
 export * from './query/queryClient';
 export * from './query/provider';
 export * from './query/keys';
+export * from './auth/with-menu-permission';
 export * from './hooks/auth';
 export * from './hooks/courses';
 export * from './hooks/admin';

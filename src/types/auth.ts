@@ -1,4 +1,24 @@
-export type Role = 'ADMIN' | 'STUDENT';
+export type Role = 'ADMIN' | 'STUDENT' | 'INSTRUCTOR';
+
+export type MenuCode = 
+  | 'MENU_HOME'
+  | 'MENU_CATALOG'
+  | 'MENU_ENROLLMENTS'
+  | 'MENU_PROGRESS'
+  | 'MENU_LEARNING_PATHS'
+  | 'MENU_ASSESSMENTS'
+  | 'MENU_ASSIGNMENTS'
+  | 'MENU_COMMUNITY'
+  | 'MENU_EVENTS'
+  | 'MENU_CAREER'
+  | 'MENU_NOTIFICATIONS'
+  | 'MENU_PROFILE'
+  | 'MENU_SETTINGS';
+
+export type MenuPermission = {
+  code: MenuCode;
+  name: string;
+};
 
 export type User = {
   id: string;

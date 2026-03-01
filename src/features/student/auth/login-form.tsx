@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Button, Card, CardContent, CardHeader, CardTitle, Input, Label } from '@/components/ui';
+import { Button, Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter, Input, Label } from '@/components/ui';
 import { useLoginMutation } from '@/lib';
 import { toast } from 'sonner';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -66,10 +66,10 @@ export const LoginForm = () => {
     <Card className="border-0 bg-card/95 shadow-2xl">
       <CardHeader>
         <CardTitle>Welcome back</CardTitle>
-        <p className="text-sm text-muted-foreground">Continue your learning journey.</p>
+        <CardDescription>Continue your learning journey.</CardDescription>
       </CardHeader>
       <CardContent>
-        <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
+        <form id="login-form" className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
             <Input id="email" type="email" placeholder="student@camnextgen.edu" {...register('email')} />
@@ -82,14 +82,32 @@ export const LoginForm = () => {
               <p className="text-xs text-destructive">{errors.password.message}</p>
             ) : null}
           </div>
-          <Button className="w-full" type="submit" disabled={mutation.isPending}>
-            {mutation.isPending ? 'Signing in...' : 'Sign in'}
-          </Button>
-          <Button variant="ghost" className="w-full" type="button" onClick={() => router.push('/auth/forgot-password')}>
-            Forgot password?
-          </Button>
         </form>
       </CardContent>
+      <CardFooter className="flex flex-col gap-4">
+        <Button className="w-full h-11 text-base font-bold shadow-soft" type="submit" form="login-form" disabled={mutation.isPending}>
+          {mutation.isPending ? 'Signing in...' : 'Sign in'}
+        </Button>
+        <Button
+          variant="ghost"
+          className="w-full h-9"
+          type="button"
+          onClick={() => router.push('/auth/forgot-password')}
+        >
+          Forgot password?
+        </Button>
+
+        <div className="text-center text-sm text-muted-foreground">
+          Don&apos;t have an account?{' '}
+          <button
+            type="button"
+            onClick={() => router.push('/auth/register')}
+            className="text-primary font-bold hover:underline underline-offset-4"
+          >
+            Sign up
+          </button>
+        </div>
+      </CardFooter>
     </Card>
   );
 };

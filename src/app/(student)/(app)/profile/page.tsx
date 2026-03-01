@@ -1,11 +1,14 @@
+'use client';
 import { PageShell } from '@/components/student/page-shell';
 import ProfileMainPage from '@/features/student/profile/ProfileMainPage';
-import { Card, CardContent } from '@/components/ui';
+import { withMenuPermission } from '@/lib';
 
-export default function Page() {
+function Page() {
   return (
     <PageShell title="Profile" description="Manage your personal information.">
       <ProfileMainPage />
     </PageShell>
   );
 }
+
+export default withMenuPermission(Page, 'MENU_PROFILE');

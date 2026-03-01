@@ -21,7 +21,7 @@ export const AuthLayout = ({ children }: { children: React.ReactNode }) => {
       <div className="absolute -left-32 top-0 h-[600px] w-[600px] rounded-full bg-brand-blue/10 blur-[140px] animate-pulse" />
       <div className="absolute -right-32 bottom-0 h-[500px] w-[500px] rounded-full bg-brand-teal/10 blur-[120px] animate-pulse" />
 
-      <div className="relative z-10 flex flex-col items-center justify-center flex-1 px-6 py-12">
+      <div className="relative z-10 flex flex-col items-center justify-center flex-1 px-6 pt-24 pb-12">
         <div className="mb-10 animate-fade-in">
           <Link href="/" className="flex flex-col items-center gap-4 group">
             <div className="relative h-16 w-16 transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6">

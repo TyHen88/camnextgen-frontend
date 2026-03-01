@@ -7,9 +7,11 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import {
     Button,
     Card,
-    CardContent,
     CardHeader,
     CardTitle,
+    CardDescription,
+    CardContent,
+    CardFooter,
     Label,
     InputOTP,
     InputOTPGroup,
@@ -20,7 +22,7 @@ import { useVerifyOtpMutation, useSendOtpMutation } from '@/lib';
 import { toast } from 'sonner';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { type OtpPurpose } from '@/types';
-import { CheckCircle2, XCircle, Loader2 } from 'lucide-react';
+import { CheckCircle2, XCircle, Loader2, RefreshCwIcon } from 'lucide-react';
 
 const schema = z.object({
     email: z.string().email('Enter a valid email'),
@@ -37,11 +39,8 @@ export const OtpVerificationForm = () => {
     const email = searchParams.get('email') ?? '';
     const purpose = (searchParams.get('purpose') as OtpPurpose) ?? 'EMAIL_VERIFICATION';
 
-    // Own state for OTP value — avoids react-hook-form Controller conflicts with input-otp
     const [otpValue, setOtpValue] = useState('');
     const [verifyStatus, setVerifyStatus] = useState<VerifyStatus>('idle');
-
-    // Guard against double-fire (StrictMode double-effect or rapid input)
     const isVerifying = useRef(false);
 
     const { register } = useForm<FormValues>({
@@ -55,7 +54,8 @@ export const OtpVerificationForm = () => {
             toast.success('Verification successful');
             setTimeout(() => {
                 if (purpose === 'PASSWORD_RESET') {
-                    router.push(`/auth/reset-password?email=${encodeURIComponent(email)}`);
+                    // Pass email and verified OTP to reset password page
+                    router.push(`/auth/reset-password?email=${encodeURIComponent(email)}&otp=${encodeURIComponent(otpValue)}`);
                 } else {
                     router.push('/auth/login?verified=1');
                 }
@@ -87,23 +87,20 @@ export const OtpVerificationForm = () => {
         }
     };
 
-    // ✅ This is the single source of truth for OTP change & auto-trigger
     const handleOtpChange = (value: string) => {
         setOtpValue(value);
-
-        // Reset so user can retry after error
         if (verifyStatus === 'error') {
             setVerifyStatus('idle');
             isVerifying.current = false;
         }
 
-        // Auto-trigger API when all 6 digits are filled
+        // Auto-trigger API when all 6 digits are filled (UX convenience)
         if (value.length === 6 && verifyStatus !== 'success' && !isVerifying.current) {
             callVerifyApi(value);
         }
     };
 
-    const handleManualSubmit = (e: React.FormEvent) => {
+    const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (otpValue.length === 6) {
             callVerifyApi(otpValue);
@@ -149,75 +146,84 @@ export const OtpVerificationForm = () => {
     const isDisabled = verifyStatus === 'loading' || verifyStatus === 'success';
 
     return (
-        <Card className="border-0 bg-card/95 shadow-2xl">
+        <Card className="mx-auto max-w-md border-0 bg-card/95 shadow-2xl">
             <CardHeader>
                 <CardTitle>Verify your account</CardTitle>
-                <p className="text-sm text-muted-foreground">
-                    We sent a 6-digit code to{' '}
+                <CardDescription>
+                    Enter the verification code we sent to your email address:{' '}
                     <span className="font-medium text-foreground">{email}</span>.
-                </p>
+                </CardDescription>
             </CardHeader>
             <CardContent>
-                <form className="space-y-5" onSubmit={handleManualSubmit}>
+                <form id="otp-form" className="space-y-6" onSubmit={handleSubmit}>
                     <input type="hidden" {...register('email')} />
                     <input type="hidden" {...register('purpose')} />
 
                     <div className="space-y-4">
-                        <Label htmlFor="otp">Verification Code</Label>
+                        <div className="flex items-center justify-between">
+                            <Label htmlFor="otp">Verification Code</Label>
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                type="button"
+                                onClick={handleResend}
+                                disabled={sendOtpMutation.isPending || isDisabled}
+                                className="h-7 px-2 text-xs"
+                            >
+                                <RefreshCwIcon className="mr-1 h-3 w-3" />
+                                Resend Code
+                            </Button>
+                        </div>
+
                         <div className="flex justify-center">
                             <InputOTP
                                 maxLength={6}
                                 value={otpValue}
                                 onChange={handleOtpChange}
                                 disabled={isDisabled}
+                                id="otp"
+                                required
                             >
-                                <InputOTPGroup>
+                                <InputOTPGroup className="*:h-12 *:w-11 *:text-xl">
                                     <InputOTPSlot index={0} />
                                     <InputOTPSlot index={1} />
-                                </InputOTPGroup>
-                                <InputOTPSeparator />
-                                <InputOTPGroup>
                                     <InputOTPSlot index={2} />
-                                    <InputOTPSlot index={3} />
                                 </InputOTPGroup>
-                                <InputOTPSeparator />
-                                <InputOTPGroup>
+                                <InputOTPSeparator className="mx-2" />
+                                <InputOTPGroup className="*:h-12 *:w-11 *:text-xl">
+                                    <InputOTPSlot index={3} />
                                     <InputOTPSlot index={4} />
                                     <InputOTPSlot index={5} />
                                 </InputOTPGroup>
                             </InputOTP>
                         </div>
 
-                        {/* Status icon */}
-                        <div className="min-h-[3rem] flex justify-center items-center">
+                        {/* Status icon area */}
+                        <div className="min-h-[2rem] flex justify-center items-center">
                             {renderStatusIcon()}
                         </div>
                     </div>
-
-                    {/* Manual submit button — fallback for when auto-detect doesn't fire */}
-                    {(verifyStatus === 'idle' || verifyStatus === 'error') && (
-                        <Button
-                            className="w-full"
-                            type="submit"
-                            disabled={otpValue.length < 6}
-                        >
-                            Verify Now
-                        </Button>
-                    )}
-
-                    <div className="text-center">
-                        <Button
-                            variant="ghost"
-                            size="sm"
-                            type="button"
-                            onClick={handleResend}
-                            disabled={sendOtpMutation.isPending || isDisabled}
-                        >
-                            {sendOtpMutation.isPending ? 'Sending…' : "Didn't get a code? Resend"}
-                        </Button>
-                    </div>
                 </form>
             </CardContent>
+            <CardFooter className="flex flex-col gap-4">
+                <Button
+                    className="w-full h-11 text-base font-bold shadow-soft"
+                    type="submit"
+                    form="otp-form"
+                    disabled={otpValue.length < 6 || isDisabled}
+                >
+                    {verifyStatus === 'loading' ? 'Verifying...' : 'Verify'}
+                </Button>
+                <div className="text-center text-sm text-muted-foreground">
+                    Having trouble signing in?{' '}
+                    <a
+                        href="#"
+                        className="hover:text-primary underline underline-offset-4 transition-colors"
+                    >
+                        Contact support
+                    </a>
+                </div>
+            </CardFooter>
         </Card>
     );
 };

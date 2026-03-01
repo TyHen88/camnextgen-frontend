@@ -1,10 +1,10 @@
 'use client';
 import { PageShell } from '@/components/student/page-shell';
-import { useAuth } from '@/lib';
+import { useAuth, withMenuPermission } from '@/lib';
 import { Badge, Button, Card, CardContent } from '@/components/ui';
 import { toast } from 'sonner';
 
-export default function Page() {
+function Page() {
   const { user } = useAuth();
 
   const converter = () => {
@@ -38,3 +38,5 @@ export default function Page() {
     </PageShell>
   );
 }
+
+export default withMenuPermission(Page, 'MENU_HOME');

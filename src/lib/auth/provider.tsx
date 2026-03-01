@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import type { AuthResponse, Role, User } from '@/types';
+import type { AuthResponse, MenuCode, Role, User } from '@/types';
 import { authApi, userApi } from '../api';
 import { refreshSession } from './refresh';
 import { clearSession, getSession, setSession } from './session';
@@ -11,9 +11,11 @@ import { getAccessToken, getRefreshToken, getSessionIndicator } from './storage'
 export type AuthContextValue = {
   user: User | null;
   role: Role | null;
+  menus: Set<MenuCode>;
   isLoading: boolean;
-  login: (payload: AuthResponse) => void;
+  login: (payload: AuthResponse) => Promise<void>;
   logout: () => Promise<void>;
+  hasMenu: (code: MenuCode) => boolean;
 };
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -22,6 +24,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
   const [user, setUser] = useState<User | null>(getSession().user);
   const [role, setRole] = useState<Role | null>(getSession().role);
+  const [menus, setMenus] = useState<Set<MenuCode>>(getSession().menus);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -35,29 +38,38 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     let isMounted = true;
 
+    const hydrateView = async (userRes: any, menuRes: any) => {
+      const userPayload = userRes.data;
+      const menuCodes = menuRes.data.map((m: any) => m.code);
+      setSession({ user: userPayload, menus: menuCodes });
+      if (isMounted) {
+        setUser(userPayload);
+        setRole(userPayload.role);
+        setMenus(new Set(menuCodes));
+      }
+    };
+
     const hydrate = async () => {
       try {
-        const response = await userApi.me();
-        if (!isMounted) {
-          return;
-        }
-        setSession({ user: response.data });
-        setUser(response.data);
-        setRole(response.data.role);
+        const [userRes, menuRes] = await Promise.all([
+          userApi.me(),
+          authApi.getMenus()
+        ]);
+        if (!isMounted) return;
+        await hydrateView(userRes, menuRes);
       } catch (error) {
         const refreshed = await refreshSession();
         if (refreshed) {
           try {
-            const response = await userApi.me();
-            if (!isMounted) {
-              return;
-            }
-            setSession({ user: response.data });
-            setUser(response.data);
-            setRole(response.data.role);
+            const [userRes, menuRes] = await Promise.all([
+              userApi.me(),
+              authApi.getMenus()
+            ]);
+            if (!isMounted) return;
+            await hydrateView(userRes, menuRes);
             return;
           } catch (refreshError) {
-            // fall through to clear session + redirect
+            // fall through
           }
         }
 
@@ -65,7 +77,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         if (isMounted) {
           setUser(null);
           setRole(null);
-          // Check URL to decide where to redirect
+          setMenus(new Set());
           if (window.location.pathname.startsWith('/admin')) {
             router.replace('/admin/auth/login');
           } else {
@@ -86,24 +98,35 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     };
   }, [router]);
 
-  const login = (payload: AuthResponse) => {
+  const login = async (payload: AuthResponse) => {
     setSession({ user: payload.user, tokens: payload.tokens });
     setUser(payload.user);
     setRole(payload.user.role);
+
+    try {
+      const menuRes = await authApi.getMenus();
+      const menuCodes = menuRes.data.map((m) => m.code);
+      setSession({ menus: menuCodes });
+      setMenus(new Set(menuCodes));
+    } catch (error) {
+      console.error('Failed to fetch menus after login', error);
+      setMenus(new Set());
+    }
+
     setIsLoading(false);
   };
 
   const logout = async () => {
     const currentRole = role;
-
     try {
       await authApi.logout();
     } catch (error) {
-      // ignore logout errors
+      // ignore
     } finally {
       clearSession();
       setUser(null);
       setRole(null);
+      setMenus(new Set());
       setIsLoading(false);
 
       if (currentRole === 'ADMIN') {
@@ -114,15 +137,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const hasMenu = (code: MenuCode) => menus.has(code);
+
   const value = useMemo(
     () => ({
       user,
       role,
+      menus,
       isLoading,
       login,
-      logout
+      logout,
+      hasMenu
     }),
-    [user, role, isLoading]
+    [user, role, menus, isLoading]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

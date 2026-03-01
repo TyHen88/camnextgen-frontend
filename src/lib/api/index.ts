@@ -11,6 +11,7 @@ import type {
   LoginRequest,
   RegisterRequest,
   ReportsOverview,
+  MenuPermission,
   ResetPasswordRequest,
   Role,
   ScholarshipApplyRequest,
@@ -55,16 +56,23 @@ const normalizeRole = (input: unknown): Role => {
     if (input.includes('ADMIN')) {
       return 'ADMIN';
     }
+    if (input.includes('INSTRUCTOR')) {
+      return 'INSTRUCTOR';
+    }
     if (input.includes('STUDENT')) {
       return 'STUDENT';
     }
   }
 
   if (typeof input === 'string') {
-    if (input === 'ADMIN') {
+    const role = input.toUpperCase();
+    if (role === 'ADMIN') {
       return 'ADMIN';
     }
-    if (input === 'STUDENT') {
+    if (role === 'INSTRUCTOR') {
+      return 'INSTRUCTOR';
+    }
+    if (role === 'STUDENT') {
       return 'STUDENT';
     }
   }
@@ -161,6 +169,11 @@ export const authApi = {
       method: 'POST',
       body: JSON.stringify(payload),
       auth: false
+    }),
+  getMenus: () =>
+    apiFetch<ApiResponse<MenuPermission[]>>(endpoints.users.menus, {
+      method: 'GET',
+      auth: true
     })
 };
 
