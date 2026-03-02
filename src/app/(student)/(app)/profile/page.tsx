@@ -5,7 +5,7 @@ import { withMenuPermission } from '@/lib';
 
 function Page() {
   return (
-    <PageShell title="Profile" description="Manage your personal information.">
+    <PageShell title="Profile & Settings" description="Manage your personal information.">
       <ProfileMainPage />
     </PageShell>
   );

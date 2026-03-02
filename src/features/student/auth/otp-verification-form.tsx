@@ -206,14 +206,7 @@ export const OtpVerificationForm = () => {
                 </form>
             </CardContent>
             <CardFooter className="flex flex-col gap-4">
-                <Button
-                    className="w-full h-11 text-base font-bold shadow-soft"
-                    type="submit"
-                    form="otp-form"
-                    disabled={otpValue.length < 6 || isDisabled}
-                >
-                    {verifyStatus === 'loading' ? 'Verifying...' : 'Verify'}
-                </Button>
+
                 <div className="text-center text-sm text-muted-foreground">
                     Having trouble signing in?{' '}
                     <a

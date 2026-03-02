@@ -5,7 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useTheme } from 'next-themes';
 
-export const AuthLayout = ({ children }: { children: React.ReactNode }) => {
+export const AuthLayout = ({ children, wide = false }: { children: React.ReactNode, wide?: boolean }) => {
   const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
@@ -22,7 +22,7 @@ export const AuthLayout = ({ children }: { children: React.ReactNode }) => {
       <div className="absolute -right-32 bottom-0 h-[500px] w-[500px] rounded-full bg-brand-teal/10 blur-[120px] animate-pulse" />
 
       <div className="relative z-10 flex flex-col items-center justify-center flex-1 px-6 pt-24 pb-12">
-        <div className="mb-10 animate-fade-in">
+        {/* <div className="mb-10 animate-fade-in">
           <Link href="/" className="flex flex-col items-center gap-4 group">
             <div className="relative h-16 w-16 transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6">
               <Image
@@ -41,9 +41,9 @@ export const AuthLayout = ({ children }: { children: React.ReactNode }) => {
               <span className="text-xs uppercase tracking-[0.3em] text-foreground/40 font-semibold mt-1">IT Education Platform</span>
             </div>
           </Link>
-        </div>
+        </div> */}
 
-        <div className="w-full max-w-md animate-slide-up">
+        <div className={`w-full ${wide ? 'max-w-5xl' : 'max-w-md'} animate-slide-up`}>
           {children}
         </div>
       </div>

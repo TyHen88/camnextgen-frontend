@@ -85,7 +85,10 @@ const normalizeUser = (input: Record<string, unknown> | null | undefined): User 
   email: String(input?.email ?? ''),
   name: String(input?.fullName ?? input?.name ?? ''),
   role: normalizeRole(input?.roles ?? input?.role),
-  avatarUrl: input?.avatarUrl ? String(input.avatarUrl) : undefined
+  avatarUrl: input?.avatarUrl ? String(input.avatarUrl) : undefined,
+  bio: input?.bio ? String(input.bio) : undefined,
+  telegramEnabled: Boolean(input?.telegramEnabled ?? false),
+  emailNotificationsEnabled: Boolean(input?.emailNotificationsEnabled ?? true)
 });
 
 const normalizeAuthResponse = (payload: unknown): AuthResponse => {

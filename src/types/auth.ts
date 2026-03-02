@@ -26,6 +26,9 @@ export type User = {
   name: string;
   role: Role;
   avatarUrl?: string;
+  bio?: string;
+  telegramEnabled?: boolean;
+  emailNotificationsEnabled?: boolean;
 };
 
 export type AuthTokens = {
@@ -74,6 +77,9 @@ export type ResetPasswordRequest = {
 export type UpdateProfileRequest = {
   name?: string;
   avatarUrl?: string;
+  bio?: string;
+  telegramEnabled?: boolean;
+  emailNotificationsEnabled?: boolean;
 };
 
 export type AuthResponse = {

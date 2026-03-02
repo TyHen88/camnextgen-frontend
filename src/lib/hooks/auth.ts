@@ -1,6 +1,6 @@
 'use client';
 
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type {
   AuthResponse,
   ForgotPasswordRequest,
@@ -8,6 +8,8 @@ import type {
   RegisterRequest,
   ResetPasswordRequest,
   SendOtpRequest,
+  UpdateProfileRequest,
+  User,
   VerifyEmailRequest,
   VerifyOtpRequest
 } from '@/types';
@@ -120,3 +122,18 @@ export const useMeQuery = () =>
     },
     retry: false
   });
+
+export const useUpdateProfileMutation = (options?: { onSuccess?: (user: User) => void }) => {
+  const queryClient = useQueryClient();
+
+  return useMutation<User, ApiError, UpdateProfileRequest>({
+    mutationFn: async (payload) => {
+      const response = await userApi.updateMe(payload);
+      return response.data;
+    },
+    onSuccess: (user) => {
+      queryClient.setQueryData(queryKeys.auth.me, user);
+      options?.onSuccess?.(user);
+    }
+  });
+};
